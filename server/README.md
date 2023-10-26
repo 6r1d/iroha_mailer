@@ -1,5 +1,6 @@
 This directory contains the server-side code
 for the Iroha news mailer, that's supposed to be running in Docker.
+Current version is available at the [`iroha_mailer`](https://hub.docker.com/r/iamgrid/iroha_mailer) [DockerHub](https://hub.docker.com) repository.
 
 It depends on:
 
@@ -11,6 +12,11 @@ It depends on:
 
 These are the commands used to configure Docker as expected.
 
+The commands are here for the demonstration and aren't
+different from the normal use of Docker.
+
+`build` and `push` commands are using version `0.1` for the example.
+
 ## Building a container
 
 ```bash
@@ -20,7 +26,7 @@ docker buildx build . --tag 'iamgrid/iroha_mailer:v0.1'
 ## Running a container
 
 ```bash
-docker run \                                           
+docker run \
        --init \
        -p 127.0.0.1:8080:8080 \
        -p 127.0.0.1:465:465 \
@@ -28,4 +34,10 @@ docker run \
        -v ./config/emails.yaml:/etc/mailer/emails.yaml \
        -v ./config/secret.txt:/run/secrets/mailer_secret \
        'iamgrid/iroha_mailer:v0.1'
+```
+
+## Pushing an updated container
+
+```bash
+docker push 'iamgrid/iroha_mailer:v0.1'
 ```
