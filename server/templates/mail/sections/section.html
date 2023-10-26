@@ -1,0 +1,29 @@
+{% from 'indent.html' import indent %}
+{% from 'icon/block_icon.html' import icon %}
+
+{% macro section(title, icon_name, items) -%}
+<table class="card rounded-2xl px-4 py-6 p-lg-8" role="presentation" border="0" cellpadding="0" cellspacing="0"
+    style="border-radius: 16px; border-collapse: separate !important; width: 100%; overflow: hidden; font-family: 'Inter', sans-serif; border: 1px solid #e2e8f0;"
+    bgcolor="#ffffff">
+    <tbody style="font-family: 'Inter', sans-serif;">
+        <tr style="font-family: 'Inter', sans-serif;">
+            <td style="line-height: 24px; font-size: 16px; width: 100%; border-radius: 16px; font-family: 'Inter', sans-serif; margin: 0; padding: 32px;"
+                align="left" bgcolor="#ffffff">
+                {{ indent('10', '40') }}
+                {{ icon(icon_name) }}
+                {{ indent('10', '40') }}
+                <h3 class="text-center"
+                    style="padding-top: 0; padding-bottom: 0; font-weight: bold; vertical-align: baseline; font-size: 28px; line-height: 33.6px; font-family: 'Inter', sans-serif; margin: 0;"
+                    align="center">{{title}}</h3>
+                {{ indent('3', '12') }}
+                <ul style="font-family: 'Inter', sans-serif;" class="news_list">
+                    {% for item in items %}
+                    <li class="" style="font-family: 'Inter', sans-serif;">{{ item }}</li>
+                    {{ indent('3', '12') }}
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{%- endmacro %}

@@ -1,0 +1,22 @@
+{% from 'footer/Common_logo.html' import company_logo %}
+
+<div class="space-y-6" style="font-family: 'Inter', sans-serif;">
+    {{ indent('6', '24') }}
+    {% include 'indent_b.html' %}
+    {{ indent('6', '24') }}
+    <a href="https://soramitsu.co.jp/" target="_blank" class="" style="color: #e5242e; font-family: 'Inter', sans-serif;">
+      {{ indent('6', '24') }}
+      {{ company_logo('Soramitsu') }}
+      {{ indent('6', '24') }}
+    </a>
+    {{ indent('6', '24') }}
+    {% include 'footer/Soramitsu_copyright.html' %}
+    {{ indent('6', '24') }}
+    <a href="https://www.hyperledger.org/" target="_blank" class="" style="color: #e5242e; font-family: 'Inter', sans-serif;">
+      {{ indent('6', '24') }}
+      {{ company_logo('Hyperledger') }}
+      {{ indent('6', '24') }}
+    </a>
+    {{ indent('6', '24') }}
+    {% include 'footer/LF_copyright.html' %}
+</div>

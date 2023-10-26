@@ -1,0 +1,15 @@
+{% macro section(title, icon, items) -%}
+<div class="row unbreakable">
+    <div class="col-md-6 offset-md-3 align-self-center border rounded-4 px-3 py-5 mb-4">
+        <p class="text-center">
+            <img src="{{icon}}" width="128">
+        </p>
+        <h3 class="text-center mb-3">{{title}}</h3>
+        <ul class="mx-5 news_list">
+            {% for item in items %}
+                <li class="mb-2">{{item}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{%- endmacro %}

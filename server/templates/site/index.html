@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container p-3">
+
+    <div class="row">
+        <div class="col">
+
+            <div class="p-5 bg-body-tertiary border rounded-3">
+                <h3>Subscribe</h3>
+                <p>If you'd like to subscribe to Iroha 2 emails, please fill
+                    an e-mail address to which you'd like to receive the updates.<br />
+                    You'll be able to unsubscribe using a link in the email.</p>
+                <p>
+                    <form action="/subscribe" method="post">
+                        <div class="input-group">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+                            <input type="submit" class="btn btn-primary" value="Subscribe">
+                        </div>
+                    </form>
+                </p>
+                <p>Thank you!</p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

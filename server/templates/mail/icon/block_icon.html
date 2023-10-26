@@ -1,0 +1,17 @@
+{% macro icon(img) -%}
+<table class="ax-center" role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" style="font-family: 'Inter', sans-serif; margin: 0 auto;">
+  <tbody style="font-family: 'Inter', sans-serif;">
+    <tr style="font-family: 'Inter', sans-serif;">
+      <td style="line-height: 24px; font-size: 16px; font-family: 'Inter', sans-serif; margin: 0;" align="left">
+        {% if img=='mark' %}
+        <img class="w-32" src="https://storage.fleek-internal.com/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/icon-1.png" style="height: auto; line-height: 100%; outline: none; text-decoration: none; display: block; width: 128px; font-family: 'Inter', sans-serif; border-style: none; border-width: 0;" width="128">
+        {% elif img=='rocket' %}
+        <img class="w-32" src="https://storage.fleek-internal.com/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/icon-2.png" style="height: auto; line-height: 100%; outline: none; text-decoration: none; display: block; width: 128px; font-family: 'Inter', sans-serif; border-style: none; border-width: 0;" width="128">
+        {% elif img=='cog' %}
+        <img class="w-32" src="https://storage.fleek-internal.com/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/icon-3.png" style="height: auto; line-height: 100%; outline: none; text-decoration: none; display: block; width: 128px; font-family: 'Inter', sans-serif; border-style: none; border-width: 0;" width="128">
+        {% endif %}
+    </td>
+    </tr>
+  </tbody>
+</table>
+{%- endmacro %}

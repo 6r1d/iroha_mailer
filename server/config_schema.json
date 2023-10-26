@@ -1,0 +1,33 @@
+{
+    "type" : "object",
+    "properties" : {
+        "server": {
+            "type": "object",
+            "properties": {
+                "port": {"type": "number"},
+                "host": {"type": "string", "format": "ipv4"}
+            },
+            "required": ["port", "host"]
+        },
+        "smtp": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "isSSL": {"type": "boolean"},
+                "user": {"type": "string"},
+                "password": {"type": "string"}
+            },
+            "required": ["host", "isSSL", "user", "password"]
+        },
+        "mail": {
+            "type": "object",
+            "properties": {
+                "email_from": {"type": "string"},
+                "root_url": {"type": "string"},
+                "enable_list_unsubscribe": {"type": "boolean"}
+            },
+            "required": ["email_from", "root_url"]
+        }
+    },
+    "required": ["server", "smtp", "mail"]
+}

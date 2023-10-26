@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from 'section.html' import section %}
+{% from 'footer_logo.html' import footer_logo %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col d-flex align-items-center offset-md-1">
+            <div class="heading">
+                <div class="logo"><img src="https://i.imgur.com/yxRwtqc.png" /></div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="row text-center">
+        <div class="col-md-6 offset-md-3 text-center">
+            <h1 class="mb-4">Bi-Weekly Community Update</h1>
+            <p class="mb-4 lead">{{date}}</p>
+        </div>
+    </div>
+
+    {{ section("Delivered features", "https://static.tildacdn.com/tild3133-3565-4330-b230-643638636631/icon-1.svg", delivered) }}
+    {{ section("Features being implemented", "https://static.tildacdn.com/tild3738-3935-4138-a236-643837333561/icon-2.svg", current_work) }}
+    {{ section("Planned features", "https://static.tildacdn.com/tild3461-6461-4133-b964-306534333936/icon-3.svg", planned) }}
+
+    <div class="row unbreakable">
+        <div class="col-md-6 offset-md-3 grey rounded-4 p-4">
+            <div class="text-center">
+                <p class="lead"><a href="mailto:iroha-news@soramitsu.co.jp" class="text-body-emphasis fw-bold">iroha-news@soramitsu.co.jp</a></p>
+                <p class="lead mb-0">If you have any questions, please feel free to contact us.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row unbreakable">
+        <div class="col-md-6 offset-md-3 p-0">
+            <hr class="mt-4"/>
+        </div>
+    </div>
+
+    {{ footer_logo("https://i.imgur.com/4KWjs67.png") }}
+
+    <div class="row unbreakable">
+        <div class="col-md-6 offset-md-3 text-center">
+            <small>Copyright © 2023 Soramitsu. All rights reserved. <a href="https://soramitsu.co.jp/terms" target="_blank" style="color: #e5242e; font-family: 'Inter', sans-serif;">Terms &amp; Conditions</a>.</small>
+        </div>
+    </div>
+
+    {{ footer_logo("https://i.imgur.com/DhrVz4e.png") }}
+
+    {% include 'disclaimer.html' %}
+
+    <div class="row unbreakable">
+        <div class="col-md-6 offset-md-3 text-center">&nbsp;</div>
+    </div>
+
+</div>
+{% endblock %}

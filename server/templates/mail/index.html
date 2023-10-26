@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from 'indent.html' import indent %}
+{% from 'sections/section.html' import section %}
+
+{% block content %}
+<table class="bg-white body" valign="top" role="presentation" border="0" cellpadding="0" cellspacing="0" style="outline: 0; width: 100%; min-width: 100%; height: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-family: Helvetica, Arial, sans-serif; line-height: 24px; font-weight: normal; font-size: 16px; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; color: #000000; margin: 0; padding: 0; border-width: 0;" bgcolor="#ffffff">
+  <tbody style="font-family: 'Inter', sans-serif;">
+    <tr style="font-family: 'Inter', sans-serif;">
+      <td valign="top" style="line-height: 24px; font-size: 16px; font-family: 'Inter', sans-serif; margin: 0;" align="left" bgcolor="#ffffff">
+        <table class="container" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%; font-family: 'Inter', sans-serif;">
+          <tbody style="font-family: 'Inter', sans-serif;">
+            <tr style="font-family: 'Inter', sans-serif;">
+              <td align="center" style="line-height: 24px; font-size: 16px; font-family: 'Inter', sans-serif; margin: 0; padding: 0 16px;">
+                <!--[if (gte mso 9)|(IE)]>
+                <table align="center" role="presentation">
+                <tbody>
+                <tr>
+                <td width="600">
+                <![endif]-->
+                <table align="center" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 600px; font-family: 'Inter', sans-serif; margin: 0 auto;">
+                  <tbody style="font-family: 'Inter', sans-serif;">
+                    <tr style="font-family: 'Inter', sans-serif;">
+                      <td style="line-height: 24px; font-size: 16px; font-family: 'Inter', sans-serif; margin: 0;" align="left">
+                        {{ indent('10', '40') }}
+                        {% include 'header/heading_logo.html' %}
+                        {{ indent('10', '40') }}
+                        {% include 'header/heading_title.html' %}
+                        {{ indent('6', '24') }}
+                        {{ section("Delivered Features", "mark", delivered) }}
+                        {{ indent('6', '24') }}
+                        {{ section("Features Being Implemented", "rocket", current_work) }}
+                        {{ indent('6', '24') }}
+                        {{ section("Planned Features", "cog", planned) }}
+                        {{ indent('6', '24') }}
+                        {% include 'sections/get_in_touch.html' %}
+                        {% include 'footer/footer.html' %}
+                        {{ indent('6', '24') }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--[if (gte mso 9)|(IE)]>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                <![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
