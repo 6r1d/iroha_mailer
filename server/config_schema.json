@@ -1,7 +1,7 @@
 {
     "type" : "object",
     "properties" : {
-        "server": {
+        "http": {
             "type": "object",
             "properties": {
                 "port": {"type": "number"},
@@ -29,5 +29,5 @@
             "required": ["email_from", "root_url"]
         }
     },
-    "required": ["server", "smtp", "mail"]
+    "required": ["http", "smtp", "mail"]
 }

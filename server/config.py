@@ -75,13 +75,13 @@ class Config:
     def get_server_options(self):
         """
         Returns:
-            (dict): AsyncIO server options, specifically,
-            the host and a port at which the HTTP server
+            (dict): AsyncIO HTTP server options, specifically,
+            the host and a port at which the server
             will be running.
         """
         return {
-            'host': self.config['server']['host'],
-            'port': self.config['server']['port']
+            'host': self.config['http']['host'],
+            'port': self.config['http']['port']
         }
 
     def get_email_from(self):
