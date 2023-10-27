@@ -7,7 +7,7 @@ sets up logging and OTP features.
 
 from logging import basicConfig as basicLoggingConfig, \
                     INFO as LOGGING_INFO, \
-                    info, warning, exception, error
+                    warning, exception, error
 from asyncio import sleep
 from aiohttp import web
 from aiosmtplib.errors import SMTPException
@@ -47,34 +47,43 @@ async def unsubscribe_by_hash(request):
         request.match_info.get('hash', ""),
         "hash"
     )
+    text = ''
     if record:
-        await Renderer(
+        text = await Renderer(
             SITE_TEMPLATE_PATH,
             template_file='unsubscribed_successfully.html'
         ).render_template({'email': record['email']})
     else:
-        await Renderer(
+        text = await Renderer(
             SITE_TEMPLATE_PATH,
             template_file='unsubscribed_no_email.html'
         ).render_template({})
     return web.Response(text=text, content_type='text/html')
 
 async def subscribe(request):
+    """
+    Returns:
+        a subscription page
+    """
     data = await request.post()
     unique = await request.app.get('book').add_email(data['email'])
+    text = ''
     if unique:
-        await Renderer(
+        text = await Renderer(
             SITE_TEMPLATE_PATH,
             template_file='subscription_successful.html'
         ).render_template({})
     else:
-        await Renderer(
+        text = await Renderer(
             SITE_TEMPLATE_PATH,
             template_file='subscription_repeat.html'
         ).render_template({})
     return web.Response(text=text, content_type='text/html')
 
 async def schedule(request):
+    """
+    Schedules the emails to be sent for a proper TOTP key.
+    """
     data = await request.post()
     template_data = decode_template_data(
         data['template_data'].file.read().decode('utf-8'),
@@ -94,10 +103,11 @@ async def schedule(request):
                                   record['hash']
                 template_data['unsubscribe_url'] = unsubscribe_url
             mail_str = await Renderer(MAIL_TEMPLATE_PATH).render_template(template_data)
+            mail_to = record['email']
             try:
                 await send_mail_async(
                     request.app['config'].get_email_from(),
-                    record['email'],
+                    mail_to,
                     template_data['title'] + ': ' + template_data['date'],
                     mail_str,
                     mail_params=request.app['config'].get_smtp(),
@@ -105,7 +115,7 @@ async def schedule(request):
                 )
             except SMTPException as smtp_exc:
                 exception(smtp_exc)
-                error()
+                error(f'Unable to send mail to {mail_to}')
             await sleep(1)
         response = web.Response(text='Scheduled', status=200)
     else:
@@ -115,38 +125,57 @@ async def schedule(request):
 
 async def preview_render(_):
     """
-    A page with a preview form.
+    Returns:
+        A page with a preview form.
     """
     text = await Renderer(SITE_TEMPLATE_PATH, template_file='preview.html').render_template({})
     return web.Response(text=text, content_type='text/html')
 
-async def view_print_render(request):
-    data = await request.post()
+async def preview_generator(mode: str, data: dict):
+    """
+    Generates a preview page for the 
+    'print' and 'mail' modes.
+
+    Arguments:
+        mode (str): print | mail
+
+    Returns:
+        (str) rendered template
+    """
+    tpath = ''
+    if mode == 'print':
+        tpath = PRINT_TEMPLATE_PATH
+    else:
+        tpath = MAIL_TEMPLATE_PATH
     template_data = decode_template_data(
         data['template_data'].file.read().decode('utf-8'),
         'print'
     )
     template_data = reformat_input_data(template_data)
-    render_str = await Renderer(PRINT_TEMPLATE_PATH).render_template(template_data)
-    return web.Response(
-        text=render_str,
-        content_type='text/html'
-    )
+    return await Renderer(tpath).render_template(template_data)
+
+async def view_print_render(request):
+    """
+    Returns:
+        a print template render for a user to preview the PDF.
+    """
+    data = await request.post()
+    render_str = await preview_generator('print', data)
+    return web.Response(text=render_str, content_type='text/html')
 
 async def view_mail_render(request):
+    """
+    Returns:
+        a mail template render for a user to preview the emails.
+    """
     data = await request.post()
-    template_data = decode_template_data(
-        data['template_data'].file.read().decode('utf-8'),
-        'print'
-    )
-    template_data = reformat_input_data(template_data)
-    render_str = await Renderer(MAIL_TEMPLATE_PATH).render_template(template_data)
-    return web.Response(
-        text=render_str,
-        content_type='text/html'
-    )
+    render_str = await preview_generator('mail', data)
+    return web.Response(text=render_str, content_type='text/html')
 
 def register_routes(app):
+    """
+    Register the AioHTTP routes
+    """
     app.add_routes([
         web.get('/', index),
         web.get('/unsubscribe/hash/{hash}', unsubscribe_by_hash),
@@ -158,6 +187,13 @@ def register_routes(app):
     ])
 
 def main():
+    """
+    Parse config, configure app, start logging,
+    register routes, start the server.
+
+    Returns:
+        None
+    """
     # Get config and arguments
     args = get_arguments()
     config = Config(args.config_path)
