@@ -26,6 +26,10 @@ The `mail` section allows you configure the key things, related to your email:
    enable or disable [`list-unsubscribe`](https://www.ietf.org/rfc/rfc2369.txt) header for your emails,
    which is useful for SEO.
 
+You **have to update** the `root_url` after an installation with `mailer_subdomain.your_domain.org` or
+`your_domain.org/mailer_route`. Leaving `list-unsubscribe` headers as incorrect will only
+look broken or spammy to modern email clients.
+
 ```toml
 [http]
 port = 8080
