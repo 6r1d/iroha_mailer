@@ -10,7 +10,8 @@ from hmac import new as hmac_new
 from base64 import b32decode, b32encode
 from struct import pack, unpack
 from hashlib import sha1
-from time import time
+from time import gmtime
+from calendar import timegm
 from random import randint
 
 def get_hotp_token(secret, intervals_no):
@@ -38,7 +39,7 @@ def get_totp_token(secret: str):
         token = get_totp_token(secret)
     """
     # Ensuring to give the same otp for 30 seconds
-    x = str(get_hotp_token(secret, intervals_no=int(time())//30))
+    x = str(get_hotp_token(secret, intervals_no=int(timegm(gmtime()))//30))
     # Adding 0 in the beginning until OTP has 6 digits
     while len(x) != 6:
         x += '0'
