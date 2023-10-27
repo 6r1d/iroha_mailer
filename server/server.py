@@ -12,7 +12,7 @@ from asyncio import sleep
 from aiohttp import web
 from aiosmtplib.errors import SMTPException
 
-from address import Address_book
+from address import AddressBook
 from sender import send_mail_async
 from render import Renderer, decode_template_data
 from filesystem import get_code_dir
@@ -198,7 +198,7 @@ def main():
     args = get_arguments()
     config = Config(args.config_path)
     # Initialise the address book
-    book = Address_book(args.emails_path)
+    book = AddressBook(args.emails_path)
     # Initialise the application
     app = web.Application()
     app['book'] = book
