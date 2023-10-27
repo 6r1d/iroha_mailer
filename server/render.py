@@ -16,6 +16,9 @@ def decode_template_data(serialized: str, mode: str):
     data['mode'] = mode
     return data
 
+# There's no reason to show a PyLint warning as
+# I know I want to refactor it.
+# pylint: disable=R0903
 class Renderer:
     """
     A common rendering utility class.
