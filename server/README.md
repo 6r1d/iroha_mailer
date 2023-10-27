@@ -62,9 +62,9 @@ docker buildx build . --tag 'iamgrid/iroha_mailer:v0.1'
 
 ```bash
 docker run \
-       --init \
-       -p 127.0.0.1:8080:8080 \
-       -p 127.0.0.1:465:465 \
+       --init --expose 8080 \
+       -p 8080:8080 \
+       -p 465:465 \
        -v ./config/config.toml:/etc/mailer/config.toml \
        -v ./config/emails.yaml:/etc/mailer/emails.yaml \
        -v ./config/secret.txt:/run/secrets/mailer_secret \
