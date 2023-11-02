@@ -37,7 +37,7 @@ host = "0.0.0.0"
 
 [smtp]
 host = 'smtp.gmail.com'
-isSSL = true
+ssl = true
 user = 'mailer@company.org'
 password = 'YOUR_PASS'
 

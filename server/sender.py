@@ -62,8 +62,8 @@ async def send_mail_async(sender, to, subject, text, **params):
 
     # Contact SMTP server and send Message
     host = mail_params.get('host', 'localhost')
-    is_ssl = mail_params.get('SSL', False)
-    is_tls = mail_params.get('TLS', False)
+    is_ssl = mail_params.get('ssl', False)
+    is_tls = mail_params.get('tls', False)
     port = mail_params.get('port', 465 if is_ssl else 25)
     smtp = SMTP(hostname=host, port=port, use_tls=is_ssl)
     await smtp.connect()

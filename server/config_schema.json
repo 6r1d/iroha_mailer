@@ -13,11 +13,12 @@
             "type": "object",
             "properties": {
                 "host": {"type": "string"},
-                "isSSL": {"type": "boolean"},
+                "ssl": {"type": "boolean"},
+                "tls": {"type": "boolean"},
                 "user": {"type": "string"},
                 "password": {"type": "string"}
             },
-            "required": ["host", "isSSL", "user", "password"]
+            "required": ["host", "user", "password"]
         },
         "mail": {
             "type": "object",
