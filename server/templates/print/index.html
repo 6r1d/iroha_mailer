@@ -3,19 +3,7 @@
 {% from 'footer_logo.html' import footer_logo %}
 
 {% block content %}
-<div class="container-fluid">
-
-    <div class="row">
-        <div class="col"></div>
-        <div class="col d-flex align-items-center offset-md-1">
-            <div class="heading">
-                <div class="logo"><img src="https://i.imgur.com/yxRwtqc.png" /></div>
-            </div>
-        </div>
-        <div class="col"></div>
-    </div>
-
-</div>
+{% include 'header.html' %}
 
 <div class="container">
 
@@ -26,9 +14,9 @@
         </div>
     </div>
 
-    {{ section("Delivered features", "https://static.tildacdn.com/tild3133-3565-4330-b230-643638636631/icon-1.svg", delivered) }}
-    {{ section("Features being implemented", "https://static.tildacdn.com/tild3738-3935-4138-a236-643837333561/icon-2.svg", current_work) }}
-    {{ section("Planned features", "https://static.tildacdn.com/tild3461-6461-4133-b964-306534333936/icon-3.svg", planned) }}
+    {{ section("Delivered features", "https://storage-fleek.soramitsu.co.jp/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/icon-1.png", delivered) }}
+    {{ section("Features being implemented", "https://storage-fleek.soramitsu.co.jp/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/icon-2.png", current_work) }}
+    {{ section("Planned features", "https://storage-fleek.soramitsu.co.jp/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/icon-3.png", planned) }}
 
     <div class="row unbreakable">
         <div class="col-md-6 offset-md-3 grey rounded-4 p-4">
@@ -45,7 +33,7 @@
         </div>
     </div>
 
-    {{ footer_logo("https://i.imgur.com/4KWjs67.png") }}
+    {{ footer_logo("https://storage-fleek.soramitsu.co.jp/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/4KWjs67.png") }}
 
     <div class="row unbreakable">
         <div class="col-md-6 offset-md-3 text-center">
@@ -53,7 +41,7 @@
         </div>
     </div>
 
-    {{ footer_logo("https://i.imgur.com/DhrVz4e.png") }}
+    {{ footer_logo("https://storage-fleek.soramitsu.co.jp/1183bac8-8e44-4596-aa51-7e2733f5f3e8-bucket/iroha/DhrVz4e.png") }}
 
     {% include 'disclaimer.html' %}
 
