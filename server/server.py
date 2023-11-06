@@ -123,14 +123,6 @@ async def schedule(request):
         warning(f'Incorrect key: {request.remote}')
     return response
 
-async def preview_render(_):
-    """
-    Returns:
-        A page with a preview form.
-    """
-    text = await Renderer(SITE_TEMPLATE_PATH, template_file='preview.html').render_template({})
-    return web.Response(text=text, content_type='text/html')
-
 async def preview_generator(mode: str, data: dict):
     """
     Generates a preview page for the 
@@ -154,35 +146,38 @@ async def preview_generator(mode: str, data: dict):
     template_data = reformat_input_data(template_data)
     return await Renderer(tpath).render_template(template_data)
 
-async def view_print_render(request):
+async def generate_print(request):
     """
-    Returns:
-        a print template render for a user to preview the PDF.
-    """
-    data = await request.post()
-    render_str = await preview_generator('print', data)
-    return web.Response(text=render_str, content_type='text/html')
-
-async def view_mail_render(request):
-    """
-    Returns:
-        a mail template render for a user to preview the emails.
+    Generates a print template provided a proper TOTP key.
     """
     data = await request.post()
-    render_str = await preview_generator('mail', data)
-    return web.Response(text=render_str, content_type='text/html')
+    template_data = decode_template_data(
+        data['template_data'].file.read().decode('utf-8'),
+        'email'
+    )
+    template_data = reformat_input_data(template_data)
+    response = None
+    # Generate a one-time password to compare against the provided one
+    otp = gen_otp_from_secret_file(request.app.get('secret_path'))
+    # Compare the OTP, render data if it's the same,
+    # show an error otherwise
+    if data['password'] == otp:
+        render_str = await Renderer(PRINT_TEMPLATE_PATH).render_template(template_data)
+        response = web.Response(text=render_str, status=200)
+    else:
+        response = web.Response(text='Unable to generate the text', status=403)
+        warning(f'Incorrect key: {request.remote}')
+    return response
 
 def register_routes(app):
     """
-    Register the AioHTTP routes
+    Register the AioHTTP routes.
     """
     app.add_routes([
         web.get('/', index),
         web.get('/unsubscribe/hash/{hash}', unsubscribe_by_hash),
-        web.get('/preview', preview_render),
-        web.post('/render/print', view_print_render),
-        web.post('/render/mail', view_mail_render),
         web.post('/subscribe', subscribe),
+        web.post('/generate_print', generate_print),
         web.post('/schedule', schedule)
     ])
 
