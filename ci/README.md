@@ -2,13 +2,18 @@
 
 ## Request utility
 
-The request utility is supposed to work in CI,
-so that a fresh news file can be sent automatically.
+The request utility is supposed to work in CI;
+it uses TOTP for security and can also be called manually.
 
-It uses TOTP for security and can also be called manually:
+There are two options for such request:
+
+* a freshly generated news template can be sent to the subscribers
+* a freshly generated news template is saved to a file for a print version
+
+### Email
 
 ```bash
-python requester.py \
+python request_mail.py \
        -s ../server/config/secret.txt \
        -a "http://ADDR:PORT/schedule" \
        -d ../config/news.toml
@@ -17,6 +22,21 @@ python requester.py \
 * `-s` option selects the TOTP `secret` file
 * `-a` option sets an address to send the data to
 * `-d` option selects the `toml` file with the news to be sent
+
+### Print version
+
+```bash
+python get_print.py \
+       -s ../server/config/secret.txt \
+       -a "http://ADDR:PORT/generate_print" \
+       -d ../config/news.toml \
+       -o output.html
+```
+
+* `-s` option selects the TOTP `secret` file
+* `-a` option sets an address to send the data to
+* `-d` option selects the `toml` file with the news to be sent
+* `-o` option sets the output file
 
 ## TOTP "secret" generator
 
