@@ -1,12 +1,11 @@
 """
-Mailer print version utility to be integrated in CI.
+Print version request utility to be integrated in CI.
 """
 
 from asyncio import run
 from argparse import ArgumentParser, Action
-from aiohttp import ClientSession
-from aiohttp.formdata import FormData
 from totp import gen_otp_from_secret_file
+from common_req import perform_print_request
 
 class FixRouteAction(Action):
     """
@@ -57,21 +56,11 @@ async def main():
 
     args = get_arguments()
     totp = gen_otp_from_secret_file(args.secret_path)
-
-    async with ClientSession() as session:
-        data = FormData()
-        data.add_field('password', totp)
-        with open(args.data_path, 'rb') as template_data:
-            data.add_field('template_data', template_data.read())
-        req = await session.post(args.address, data=data)
-        if req.status == 200:
-            print('The result was generated')
-            with open(args.output_path, 'w', encoding='utf-8') as output_file:
-                output_file.write(
-                    await req.text()
-                )
-        else:
-            print(f'Unable to generate the print version. HTTP status: {req.status}')
+    html_render_str = await perform_print_request(
+        args.address, args.data_path, totp
+    )
+    with open(args.output_path, 'w', encoding='utf-8') as output_file:
+        output_file.write(html_render_str)
 
 if __name__ == '__main__':
     run(main())

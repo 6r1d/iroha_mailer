@@ -4,9 +4,8 @@ Mailer request utility to be integrated in CI.
 
 from asyncio import run
 from argparse import ArgumentParser, Action
-from aiohttp import ClientSession
-from aiohttp.formdata import FormData
 from totp import gen_otp_from_secret_file
+from common_req import perform_mail_request
 
 class FixRouteAction(Action):
     """
@@ -51,17 +50,8 @@ async def main():
 
     args = get_arguments()
     totp = gen_otp_from_secret_file(args.secret_path)
+    await perform_mail_request(args.address, args.data_path, totp)
 
-    async with ClientSession() as session:
-        data = FormData()
-        data.add_field('password', totp)
-        with open(args.data_path, 'rb') as template_data:
-            data.add_field('template_data', template_data.read())
-        req = await session.post(args.address, data=data)
-        if req.status == 200:
-            print('Emails sent successfully')
-        else:
-            print(f'Unable to send the emails. HTTP status: {req.status}')
 
 if __name__ == '__main__':
     run(main())
