@@ -1,3 +1,5 @@
+# Iroha Mailer server
+
 This directory contains the server-side code
 for the Iroha news mailer.
 Generally, this code is running in Docker, but it can run separately when the requirements are met.
@@ -23,7 +25,7 @@ It depends on:
 You have to generate the secret at least once,
 and you should periodically update it for the sake of security.
 
-# Configuration structure
+## Configuration structure
 
 The configuration is split on three sections, `http`, `smtp`, `mail`.
 
@@ -64,7 +66,21 @@ root_url = "test_mailer.org"
 enable_list_unsubscribe = true
 ```
 
-# Container-related commands
+## Subscriber list structure
+
+The subscriber list is a `yaml` file containing a list of emails of the subscribers
+and the hashes of each email for the minimal security of unsubscribing.
+
+```yaml
+- email: abc@example.com
+  hash: 9eceb13483d7f187ec014fd6d4854d1420cfc634328af85f51d0323ba8622e21
+- email: def@example.com
+  hash: 02193528ea83dd659b8ce164f829e8927b5d57467ce45a6c50ddfc8b9b0d003a
+- email: ghi@example.com
+  hash: b85126a0ad08c941d33860b712b6952e66b0efe341b05b353864d12811af99c8
+```
+
+## Container-related commands
 
 These are the commands used to configure Docker as expected.
 
@@ -73,13 +89,13 @@ different from the normal use of Docker.
 
 `build` and `push` commands are using version `0.1.4` for the example.
 
-## Building a container
+### Building a container
 
 ```bash
 docker buildx build . --tag 'iamgrid/iroha_mailer:v0.1.4'
 ```
 
-## Running a container
+### Running a container
 
 ```bash
 docker run \
@@ -92,7 +108,7 @@ docker run \
        'iamgrid/iroha_mailer:v0.1.4'
 ```
 
-## Pushing an updated container
+### Pushing an updated container
 
 ```bash
 docker push 'iamgrid/iroha_mailer:v0.1.4'
