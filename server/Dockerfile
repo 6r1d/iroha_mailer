@@ -1,5 +1,9 @@
 FROM python:3.11-slim
 
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install nano
+
 RUN mkdir /opt/mailer
 WORKDIR /opt/mailer
 
