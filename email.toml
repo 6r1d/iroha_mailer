@@ -1,0 +1,35 @@
+year = "2023"
+date = "October 24, 2023"
+title = "Hyperledger Iroha Bi-Weekly News"
+delivered = [
+    "Release RC20",
+    "[refactor]: remove unused dependencies ([#3992](https://github.com/hyperledger/iroha/pull/3992))",
+    "[feature] #3516: make FindTrigger queries return the original WASM",
+    "[refactor]: bump dependencies ([#3981](https://github.com/hyperledger/iroha/pull/3981))",
+    "[refactor] #3918: Rename `Validator` to the `Executor` ([#3976](https://github.com/hyperledger/iroha/pull/3976))",
+    "[refactor] #3874: Remove `IsAssetDefinitionOwner` ([#3979](https://github.com/hyperledger/iroha/pull/3979))",
+    "[feature] #3953: Transfer `Domain` ownership",
+    "[feature] #3953: `Domain` owner permissions",
+    "[feature] #3953: Add `owned_by` field to Domain",
+    "[fix] [#3931](https://github.com/hyperledger/iroha/pull/3931): Fix burn `Trigger` repetitions",
+    "[fix] [#3932](https://github.com/hyperledger/iroha/pull/3932): Fix transfer `AssetDefinition`",
+    "[fix] [#3953](https://github.com/hyperledger/iroha/pull/3953): Fix `RemoveKeyValue` for Domain"
+]
+current_work = [
+    "Optimising permission tokens and moving them to a separate module",
+    "Moving to [syn2](https://docs.rs/syn/latest/syn/)",
+    "Simplifying the `Executor` API",
+    "\"[Configuration RFC](https://github.com/hyperledger/iroha-rfcs/blob/main/001-config-overhaul.md)\" implementation",
+    "Reviewing the \"[Oracle RFC](https://github.com/hyperledger/iroha-rfcs/pull/2)\"",
+    "Remove view change proof from every message in Sumeragi",
+    "Move new parameter into the `Executor`",
+    "Extend `iroha_client_cli` functionality",
+    "Add `Register<AssetDefinition>` permissions"
+]
+planned = [
+    "Dynamic Expression system (move the expression evaluation into Executor)",
+    "Enable setting `fetch_size` for every query",
+    "Fix loophole with deserialising Expressions",
+    "Fix the bug that appears when one's granting custom tokens",
+    "ISA restructuring"
+]
