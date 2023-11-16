@@ -31,7 +31,7 @@ jobs:
             -s ./secret.txt \
             -d ./emails.toml \
             -o output.html \
-            -a https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print
+            -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
 
       - name: ls
         run: ls -alh
