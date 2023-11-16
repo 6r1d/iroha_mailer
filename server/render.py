@@ -5,15 +5,11 @@ Internal template code with the async support.
 from tomllib import loads
 from jinja2 import FileSystemLoader, Environment
 
-def decode_template_data(serialized: str, mode: str):
+def decode_template_data(serialized: str):
     """
     Deserialize and update the template data.
-
-    TODO:
-        refactor
     """
     data = loads(serialized)
-    data['mode'] = mode
     return data
 
 # There's no reason to show a PyLint warning as

@@ -87,12 +87,12 @@ These are the commands used to configure Docker as expected.
 The commands are here for the demonstration and aren't
 different from the normal use of Docker.
 
-`build` and `push` commands are using version `0.1.5` for the example.
+`build` and `push` commands are using version `0.1.6` for the example.
 
 ### Building a container
 
 ```bash
-docker buildx build . --tag 'iamgrid/iroha_mailer:v0.1.5'
+docker buildx build . --tag 'iamgrid/iroha_mailer:v0.1.6'
 ```
 
 ### Running a container
@@ -105,11 +105,11 @@ docker run \
        -v ./config/config.toml:/etc/mailer/config.toml \
        -v ./config/emails.yaml:/etc/mailer/emails.yaml \
        -v ./config/secret.txt:/run/secrets/mailer_secret \
-       'iamgrid/iroha_mailer:v0.1.5'
+       'iamgrid/iroha_mailer:v0.1.6'
 ```
 
 ### Pushing an updated container
 
 ```bash
-docker push 'iamgrid/iroha_mailer:v0.1.5'
+docker push 'iamgrid/iroha_mailer:v0.1.6'
 ```

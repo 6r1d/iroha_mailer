@@ -85,8 +85,7 @@ async def schedule(request):
     """
     data = await request.post()
     template_data = decode_template_data(
-        data['template_data'].file.read().decode('utf-8'),
-        'email'
+        data['template_data'].file.read().decode('utf-8')
     )
     template_data = reformat_input_data(template_data)
     response = None
@@ -121,37 +120,13 @@ async def schedule(request):
         warning(f'Incorrect key: {request.remote}')
     return response
 
-async def preview_generator(mode: str, data: dict):
-    """
-    Generates a preview page for the 
-    'print' and 'mail' modes.
-
-    Arguments:
-        mode (str): print | mail
-
-    Returns:
-        (str) rendered template
-    """
-    tpath = ''
-    if mode == 'print':
-        tpath = PRINT_TEMPLATE_PATH
-    else:
-        tpath = MAIL_TEMPLATE_PATH
-    template_data = decode_template_data(
-        data['template_data'].file.read().decode('utf-8'),
-        'print'
-    )
-    template_data = reformat_input_data(template_data)
-    return await Renderer(tpath).render_template(template_data)
-
 async def generate_print(request):
     """
     Generates a print template provided a proper TOTP key.
     """
     data = await request.post()
     template_data = decode_template_data(
-        data['template_data'].file.read().decode('utf-8'),
-        'email'
+        data['template_data'].file.read().decode('utf-8')
     )
     template_data = reformat_input_data(template_data)
     response = None
