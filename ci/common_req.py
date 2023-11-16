@@ -1,5 +1,7 @@
 # pylint: disable=C0114
+import sys
 from logging import info
+from argparse import ArgumentParser, Action
 from aiohttp import ClientSession
 from aiohttp.formdata import FormData
 
@@ -57,3 +59,68 @@ async def perform_print_request(addr: str, data_path: str, totp: str):
         if req.status == 200:
             result = await req.text()
     return result
+
+class FixPrintRouteAction(Action):
+    """
+    Fixes the route, adding the "/generate_print" part.
+    """
+
+    def __call__(self, parser, args, value, option_string=None):
+        value = value.removesuffix('/generate_print').removesuffix('/generate_print/')
+        setattr(args, self.dest, f'{value}/generate_print')
+
+class FixMailRouteAction(Action):
+    """
+    Fixes the route, adding the "/schedule" part.
+    """
+
+    def __call__(self, parser, args, value, option_string=None):
+        value = value.removesuffix('/schedule').removesuffix('/schedule/')
+        setattr(args, self.dest, f'{value}/schedule')
+
+def get_arguments(mode: str):
+    """
+    Retrieves the Argparse arguments.
+
+    Args:
+        mode (str): (mail or print)
+    """
+    fix_route_action = None
+    if mode == 'mail':
+        description = 'Mail requester utility'
+        fix_route_action = FixMailRouteAction
+    elif mode == 'print':
+        description = 'Print version requester utility'
+        fix_route_action = FixPrintRouteAction
+    else:
+        # Fail early as it's a potential code error
+        description = 'Incorrect argument configuration mode detected'
+        sys.exit(1)
+    parser = ArgumentParser(description=description)
+    parser.add_argument(
+        '-s',
+        '--secret_path',
+        help='Path to the secret file for the TOTP generator',
+        required=True
+    )
+    parser.add_argument(
+        '-a',
+        '--address',
+        help="HTTP address",
+        required=True,
+        action=fix_route_action
+    )
+    parser.add_argument(
+        '-d',
+        "--data_path",
+        help="Path to the data file",
+        required=True
+    )
+    if mode == 'print':
+        parser.add_argument(
+            '-o',
+            "--output_path",
+            help="Path to the output HTML file",
+            required=True
+        )
+    return parser.parse_args()
