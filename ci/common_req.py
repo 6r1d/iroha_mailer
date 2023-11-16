@@ -41,7 +41,7 @@ async def perform_mail_request(addr: str, data_path: str, totp: str):
     Sends a request for mailing.
     """
     async with ClientSession() as session:
-        data = prepare_request(data_path, totp)
+        data = await prepare_request(data_path, totp)
         req = await session.post(addr, data=data)
         await log_request('email', req.status)
 
@@ -51,7 +51,7 @@ async def perform_print_request(addr: str, data_path: str, totp: str):
     """
     result = ''
     async with ClientSession() as session:
-        data = prepare_request(data_path, totp)
+        data = await prepare_request(data_path, totp)
         req = await session.post(addr, data=data)
         await log_request('print', req.status)
         if req.status == 200:
