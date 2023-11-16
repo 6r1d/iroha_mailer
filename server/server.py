@@ -43,16 +43,15 @@ async def unsubscribe_by_hash(request):
     """
     Unsubscribe from an email by a hash.
     """
-    record = await request.app.get('book').pop_key(
-        request.match_info.get('hash', ""),
-        "hash"
+    email = await request.app.get('book').pop_hash(
+        request.match_info.get('hash', "")
     )
     text = ''
-    if record:
+    if email:
         text = await Renderer(
             SITE_TEMPLATE_PATH,
             template_file='unsubscribed_successfully.html'
-        ).render_template({'email': record['email']})
+        ).render_template({'email': email})
     else:
         text = await Renderer(
             SITE_TEMPLATE_PATH,
@@ -95,19 +94,18 @@ async def schedule(request):
     otp = gen_otp_from_secret_file(request.app.get('secret_path'))
     if data['password'] == otp:
         emails = await request.app.get('book').read_emails()
-        for record in emails:
+        for mail_hash, email in emails.items():
             unsubscribe_url = None
             if request.app['config'].check_list_unsubscribe_mode():
                 unsubscribe_url = request.app['config'].get_site_url() + \
                                   '/unsubscribe/hash/' + \
-                                  record['hash']
+                                  mail_hash
                 template_data['unsubscribe_url'] = unsubscribe_url
             mail_str = await Renderer(MAIL_TEMPLATE_PATH).render_template(template_data)
-            mail_to = record['email']
             try:
                 await send_mail_async(
                     request.app['config'].get_email_from(),
-                    mail_to,
+                    email,
                     template_data['title'] + ': ' + template_data['date'],
                     mail_str,
                     mail_params=request.app['config'].get_smtp(),
@@ -115,7 +113,7 @@ async def schedule(request):
                 )
             except SMTPException as smtp_exc:
                 exception(smtp_exc)
-                error(f'Unable to send mail to {mail_to}')
+                error(f'Unable to send mail to {email}')
             await sleep(1)
         response = web.Response(text='Scheduled', status=200)
     else:

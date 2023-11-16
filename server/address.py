@@ -2,7 +2,8 @@
 Address book utilities.
 """
 
-from hashlib import sha256
+from os import urandom
+from hashlib import sha1
 from logging import info, error
 from yaml import safe_dump, safe_load
 
@@ -23,11 +24,12 @@ class AddressBook:
         index_filled = self.addr_file_path.stat().st_size == 0
         if not index_exists or not index_filled:
             with open(self.addr_file_path, 'w', encoding='utf-8') as index_file:
-                index_file.write('[]')
+                index_file.write('---')
 
     async def read_emails(self):
         """
-        Returns a list of emails with their hashes.
+        Returns:
+            (dict) hashes as keys, emails as values
         """
         emails = []
         try:
@@ -41,31 +43,31 @@ class AddressBook:
     async def add_email(self, email: str):
         """
         Adds an email.
+        Returns True if it isn't present in the file.
         """
         unique = True
         email = email.strip().lower()
-        mail_hash = sha256(email.encode('ascii')).hexdigest()
-        record = {'email': email, 'hash': mail_hash}
+        mail_hash = sha1(email.encode('ascii') + urandom(8)).hexdigest()
         emails = await self.read_emails()
-        if list(filter(lambda record: record['email'] == email, emails)):
-            unique = False
-        emails = [addr for addr in emails if addr['email'].strip() != email]
-        emails.append(record)
+        if not isinstance(emails, dict):
+            emails = {}
+        for _, tmp_email in emails.items():
+            if tmp_email == email:
+                unique = False
+        emails[mail_hash] = email
         with open(self.addr_file_path, 'w', encoding='utf-8') as x_file:
             safe_dump(emails, x_file)
         return unique
 
-    async def pop_key(self, key: str, key_type: str):
+    async def pop_hash(self, mail_hash: str):
         """
-        Removes and returns a key.
-        Used for unsubscription.
+        Removes the email by its hash. Used for unsubscription.
+
+        Returns:
+            the unsubscribed user's email
         """
-        result = None
         emails = await self.read_emails()
-        removed = list(filter(lambda record: record[key_type] == key, emails))
-        if removed:
-            result = removed[0]
-        emails = list(filter(lambda record: record[key_type] != key, emails))
+        result = emails.pop(mail_hash, None)
         with open(self.addr_file_path, 'w', encoding='utf-8') as addr_file:
             safe_dump(emails, addr_file)
         return result
