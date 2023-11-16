@@ -6,9 +6,6 @@ on:
 jobs:
   send-email:
     runs-on: ubuntu-latest
-    container: 
-      image: iamgrid/iroha_mailer:v0.1.5
-      options: --user root
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6
 
@@ -25,7 +22,7 @@ jobs:
 
       - name: Send new email and save it
         run: | 
-          python ../request_print.py 
+          python ./ci/request_print.py 
             -s ./secret.txt \
             -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print" \ 
             -d ./emails.toml \
