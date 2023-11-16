@@ -27,11 +27,7 @@ jobs:
 
       - name: Send new email and save it
         run: | 
-          python ./ci/request_print.py \
-            -s ./secret.txt \
-            -d ./emails.toml \
-            -o output.html \
-            -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
+          python ./ci/request_print.py -s ./secret.txt -d ./emails.toml -o output.html -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
 
       - name: ls
         run: ls -alh
