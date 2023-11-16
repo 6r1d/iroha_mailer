@@ -12,6 +12,11 @@ jobs:
       - name: ls
         run: ls -alh
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ci/requirements.txt
+
       - name: Save secret as file
         env:
           CODECOV_TOKEN: ${{ secrets.CONNECT_SECRET }}
