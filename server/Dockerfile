@@ -15,7 +15,9 @@ COPY config_schema.json .
 COPY templates /opt/mailer/templates
 
 RUN useradd -ms /bin/bash mailer && \
-    chown mailer:mailer /opt/mailer -R
+    chown mailer:mailer /opt/mailer -R && \
+    chown root:root *.py && \
+    chmod +x server.py
 
 USER mailer
 
@@ -26,4 +28,4 @@ ENV PYTHONUNBUFFERED 1
 
 HEALTHCHECK CMD python /opt/mailer/healthcheck.py || exit 1
 
-CMD ["python", "server.py", "-c", "/etc/mailer/config.toml", "-e", "/etc/mailer/emails.yaml", "-s", "/run/secrets/mailer_secret"]
+CMD ["/opt/mailer/server.py", "-c", "/etc/mailer/config.toml", "-e", "/etc/mailer/emails.yaml", "-s", "/run/secrets/mailer_secret"]
