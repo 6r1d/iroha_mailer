@@ -29,9 +29,9 @@ jobs:
         run: | 
           python ./ci/request_print.py \
             -s ./secret.txt \
-            -a https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print \ 
             -d ./emails.toml \
-            -o output.html
+            -o output.html \
+            -a https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print
 
       - name: ls
         run: ls -alh
