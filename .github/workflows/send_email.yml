@@ -38,3 +38,9 @@ jobs:
       - name: Send email
         run: |
           python ./ci/request_mail.py -s ./secret.txt -d ./email.toml -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/schedule"
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: ./output.html
