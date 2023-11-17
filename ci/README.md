@@ -58,3 +58,24 @@ JVXRCQY5GRBEYBY=
 # Copy a secret file to the server configuration
 cp ./random_secret.txt ../server/config/secret.txt
 ```
+
+## Example "news" to be sent
+
+Below is a short TOML file reflecting the structure for an email / document render.
+
+```toml
+year = "202X"
+date = "January X 24, 202X"
+title = "Hyperledger Iroha Bi-Weekly News"
+delivered = [
+    "Delivered feature A",
+    "Delivered feature B"
+]
+current_work = [
+    "Feature in development: MacGuffin"
+]
+planned = [
+    "Planned feature 1",
+    "Planned feature 2"
+]
+```
