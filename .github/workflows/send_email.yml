@@ -6,7 +6,9 @@ on:
 jobs:
   send-email:
     runs-on: ubuntu-latest
-    container: soramitsu/iroha2-mailer-ci:latest
+    container:
+      image: soramitsu/iroha2-mailer-ci:latest
+      options: --user root
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6
 
