@@ -22,16 +22,16 @@ jobs:
           CONNECT_SECRET: ${{ secrets.CONNECT_SECRET }}
         run: echo -n $CONNECT_SECRET > secret.txt
 
-      # - name: Get email
-      #   run: | 
-      #     python ./ci/request_print.py -s ./secret.txt -d ./email.toml -o output.html -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
+      - name: Get email
+        run: | 
+          python /app/request_print.py -s ./secret.txt -d ./email.toml -o output.html -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
 
       # - name: Send email
       #   run: |
       #     python ./ci/request_mail.py -s ./secret.txt -d ./email.toml -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/schedule"
 
-      # - name: Archive code coverage results
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: output.html
-      #     path: ./output.html
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: output.html
+          path: ./output.html
