@@ -6,41 +6,30 @@ on:
 jobs:
   send-email:
     runs-on: ubuntu-latest
+    container: soramitsu/iroha2-mailer-ci:latest
     steps:
       - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6
-
-      - name: ls
-        run: ls -alh
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ci/requirements.txt
+          pip install -r /app/requirements.txt
 
       - name: Save secret as file
         env:
           CONNECT_SECRET: ${{ secrets.CONNECT_SECRET }}
         run: echo -n $CONNECT_SECRET > secret.txt
 
-      - name: ls
-        run: ls -alh
+      # - name: Get email
+      #   run: | 
+      #     python ./ci/request_print.py -s ./secret.txt -d ./email.toml -o output.html -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
 
-      - name: Get email
-        run: | 
-          python ./ci/request_print.py -s ./secret.txt -d ./email.toml -o output.html -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/generate_print"
+      # - name: Send email
+      #   run: |
+      #     python ./ci/request_mail.py -s ./secret.txt -d ./email.toml -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/schedule"
 
-      - name: ls
-        run: ls -alh
-
-      - name: Check
-        run: cat output.html
-
-      - name: Send email
-        run: |
-          python ./ci/request_mail.py -s ./secret.txt -d ./email.toml -a "https://mail.dev.iroha2.tachi.soramitsu.co.jp/schedule"
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v3
-        with:
-          name: output.html
-          path: ./output.html
+      # - name: Archive code coverage results
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: output.html
+      #     path: ./output.html
