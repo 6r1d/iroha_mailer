@@ -10,7 +10,7 @@ jobs:
       image: soramitsu/iroha2-mailer-ci:latest
       options: --user root
     steps:
-      - uses: actions/checkout@dc323e67f16fb5f7663d20ff7941f27f5809e9b6
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
       - name: Install dependencies
         run: |
