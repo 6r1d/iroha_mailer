@@ -15,8 +15,7 @@ COPY config_schema.json .
 COPY templates /opt/mailer/templates
 
 RUN useradd -ms /bin/bash mailer && \
-    chown mailer:mailer /opt/mailer -R && \
-    chown root:root *.py && \
+    chown root:root /opt/mailer -R && \
     chmod +x server.py
 
 USER mailer
