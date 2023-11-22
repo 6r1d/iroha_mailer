@@ -1,21 +1,13 @@
 FROM python:3.11-slim
 
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get -y install nano
-
-RUN mkdir /opt/mailer
 WORKDIR /opt/mailer
 
 COPY requirements.txt .
-RUN mkdir -p templates && \
-    pip install --no-cache-dir -r requirements.txt
-COPY *.py .
-COPY config_schema.json .
-COPY templates /opt/mailer/templates
+RUN pip install --no-cache-dir -r requirements.txt
+COPY *.py config_schema.json .
+COPY templates templates
 
 RUN useradd -ms /bin/bash mailer && \
-    chown root:root /opt/mailer -R && \
     chmod +x server.py
 
 USER mailer
