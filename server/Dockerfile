@@ -2,7 +2,9 @@ FROM python:3.11-slim
 
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install nano
+    apt-get -y install nano=7.2-1 --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /opt/mailer
 WORKDIR /opt/mailer
@@ -16,7 +18,7 @@ COPY templates /opt/mailer/templates
 
 RUN useradd -ms /bin/bash mailer && \
     chown mailer:mailer /opt/mailer -R && \
-    chown root:root *.py && \
+    chown root:root /opt/mailer/*.py && \
     chmod +x server.py
 
 USER mailer
