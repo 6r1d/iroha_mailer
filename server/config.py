@@ -72,17 +72,19 @@ class Config:
             output_error = err
         return output_error
 
-    def get_server_options(self):
+    def get_server_host(self):
         """
         Returns:
-            (dict): AsyncIO HTTP server options, specifically,
-            the host and a port at which the server
-            will be running.
+            (str): AsyncIO HTTP server host
         """
-        return {
-            'host': self.config['http']['host'],
-            'port': self.config['http']['port']
-        }
+        return self.config['http']['host']
+
+    def get_server_port(self):
+        """
+        Returns:
+            (str): AsyncIO HTTP server port
+        """
+        return self.config['http']['port']
 
     def get_email_from(self):
         """
@@ -98,16 +100,33 @@ class Config:
         """
         return self.config['smtp']
 
+    def get_gmail_api(self):
+        """
+        Returns:
+            (dict) GMail API configuration
+        """
+        return self.config['gmail']
+
     def get_site_url(self):
         """
         Returns:
             (str / None) site url, needed for the unsubscribe links or None
         """
-        return self.config['mail']['root_url'].rstrip('/')
+        root_url: str = self.config['subscription']['root_url']
+        if root_url:
+            root_url = root_url.rstrip('/')
+        return root_url
 
-    def check_list_unsubscribe_mode(self):
+    def check_unsubscription_enabled(self):
         """
         Returns:
-            (Boolean) returns True if list-unsubscribe header is enabled
+            (Boolean) True if list-unsubscribe header is enabled
         """
-        return self.config['mail'].get('enable_list_unsubscribe', False)
+        return self.config['subscription'].get('enable_list_unsubscribe', False)
+
+    def get_mailing_mode(self):
+        """
+        Returns:
+            (str): SMTP or GMail
+        """
+        return self.config['mail'].get('mode', 'GMail')

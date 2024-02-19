@@ -9,19 +9,19 @@ sets up logging and OTP features.
 
 from logging import basicConfig as basicLoggingConfig, \
                     INFO as LOGGING_INFO, \
-                    warning, exception, error
-from asyncio import sleep
-from aiohttp import web
-from aiosmtplib.errors import SMTPException
+                    warning
+from asyncio import create_task, run, gather
+from pathlib import Path
 
+from aiohttp import web
 from address import AddressBook
-from sender import send_mail_async
 from render import Renderer, decode_template_data
 from filesystem import get_code_dir
 from formatting import reformat_input_data
 from arguments import get_arguments
 from config import Config
-from totp import gen_otp_from_secret_file
+from totp import validate_otp, gen_otp_from_secret_file
+from rotation import queue_email_rotation, Rotator
 
 # The location of a code
 CODE_DIR = get_code_dir()
@@ -81,6 +81,19 @@ async def subscribe(request):
         ).render_template({})
     return web.Response(text=text, content_type='text/html')
 
+async def prepare_email(template_data: dict, sender: str, recipient: str):
+    """
+    Prepares an email message to be scheduled for sending.
+    """
+    scheduled_email = {
+        'text': await Renderer(MAIL_TEMPLATE_PATH).render_template(template_data),
+        'subject': template_data['title'] + ': ' + template_data['date'],
+        'sender': sender,
+        'recipient': recipient,
+        'unsubscribe_url': template_data.get('unsubscribe_url', None)
+    }
+    return scheduled_email
+
 async def schedule(request):
     """
     Schedules the emails to be sent for a proper TOTP key.
@@ -90,32 +103,25 @@ async def schedule(request):
         data['template_data'].file.read().decode('utf-8')
     )
     template_data = reformat_input_data(template_data)
+    # Retrieve the config
+    config = request.app['config']
     response = None
     # Generate a one-time password
     otp = gen_otp_from_secret_file(request.app.get('secret_path'))
-    if data['password'] == otp:
+    # Retrieve the reused configuration parameters
+    site_url = config.get_site_url()
+    sender = config.get_email_from()
+    if data.get('password') == otp:
         emails = await request.app.get('book').read_emails()
         for mail_hash, email in emails.items():
-            unsubscribe_url = None
-            if request.app['config'].check_list_unsubscribe_mode():
-                unsubscribe_url = request.app['config'].get_site_url() + \
-                                  '/unsubscribe/hash/' + \
-                                  mail_hash
-                template_data['unsubscribe_url'] = unsubscribe_url
-            mail_str = await Renderer(MAIL_TEMPLATE_PATH).render_template(template_data)
-            try:
-                await send_mail_async(
-                    request.app['config'].get_email_from(),
-                    email,
-                    template_data['title'] + ': ' + template_data['date'],
-                    mail_str,
-                    mail_params=request.app['config'].get_smtp(),
-                    list_unsubscribe=unsubscribe_url
-                )
-            except SMTPException as smtp_exc:
-                exception(smtp_exc)
-                error(f'Unable to send mail to {email}')
-            await sleep(1)
+            # Check if if "list-unsubscribe" header is enabled
+            if config.check_unsubscription_enabled():
+                template_data['unsubscribe_url'] = f'{site_url}/unsubscribe/hash/{mail_hash}'
+            # Prepare and queue an email
+            scheduled_email = await prepare_email(
+                template_data, sender, email
+            )
+            queue_email_rotation(request.app.get('rotation_path'), scheduled_email)
         response = web.Response(text='Scheduled', status=200)
     else:
         response = web.Response(text='Unable to send emails', status=403)
@@ -132,11 +138,9 @@ async def generate_print(request):
     )
     template_data = reformat_input_data(template_data)
     response = None
-    # Generate a one-time password to compare against the provided one
-    otp = gen_otp_from_secret_file(request.app.get('secret_path'))
     # Compare the OTP, render data if it's the same,
     # show an error otherwise
-    if data['password'] == otp:
+    if validate_otp(request.app.get('secret_path'), data.get('password')):
         render_str = await Renderer(PRINT_TEMPLATE_PATH).render_template(template_data)
         response = web.Response(text=render_str, status=200)
     else:
@@ -144,19 +148,61 @@ async def generate_print(request):
         warning(f'Incorrect key: {request.remote}')
     return response
 
-def register_routes(app):
-    """
-    Register the AioHTTP routes.
-    """
-    app.add_routes([
-        web.get('/', index),
-        web.get('/unsubscribe/hash/{hash}', unsubscribe_by_hash),
-        web.post('/subscribe', subscribe),
-        web.post('/generate_print', generate_print),
-        web.post('/schedule', schedule)
-    ])
+class MailerServer:
 
-def main():
+    """
+    The aiohttp-based server class used by mailer.
+    """
+
+    def __init__(self, args, config):
+        self.running = True
+        # Create the aiohttp application instance
+        self.app = web.Application()
+        self.args = args
+        self.config = config
+        # Configure app
+        self.register_app_parameters()
+        self.register_routes()
+
+    def register_app_parameters(self):
+        """
+        Set up app parameters: address book instance,
+        configuration interface, path to secrets,
+        a path to the rotation directory
+        """
+        self.app['book'] = AddressBook(self.args.emails_path)
+        self.app['config'] = self.config
+        self.app['secret_path'] = self.args.secret_path
+        self.app['rotation_path'] = Path(self.args.rotation_path).absolute()
+
+    def register_routes(self):
+        """
+        Register the AioHTTP routes.
+        """
+        self.app.add_routes([
+            web.get('/', index),
+            web.get('/unsubscribe/hash/{hash}', unsubscribe_by_hash),
+            web.post('/subscribe', subscribe),
+            web.post('/generate_print', generate_print),
+            web.post('/schedule', schedule)
+        ])
+
+    async def setup_app(self):
+        """
+        Returns:
+            self
+        """
+        runner = web.AppRunner(self.app)
+        await runner.setup()
+        site = web.TCPSite(
+            runner,
+            self.config.get_server_host(),
+            self.config.get_server_port()
+        )
+        await site.start()
+        return self
+
+async def main():
     """
     Parse config, configure app, start logging,
     register routes, start the server.
@@ -167,19 +213,17 @@ def main():
     # Get config and arguments
     args = get_arguments()
     config = Config(args.config_path)
-    # Initialise the address book
-    book = AddressBook(args.emails_path)
-    # Initialise the application
-    app = web.Application()
-    app['book'] = book
-    app['config'] = config
-    app['secret_path'] = args.secret_path
     # Initialise logging
     basicLoggingConfig(level=LOGGING_INFO)
-    # Add application routes
-    register_routes(app)
-    # Start the server
-    web.run_app(app, **config.get_server_options())
+    # Set up the mailer server
+    server_instance = MailerServer(args, config)
+    # Configure the server
+    http_server = create_task(server_instance.setup_app())
+    # Configure the rotator
+    rotator = Rotator(args.rotation_path, config)
+    rotator_task = create_task(rotator.rotate(server_instance, 1))
+    # Gather all AsyncIO runners
+    return await gather(http_server, rotator_task)
 
 if __name__ == '__main__':
-    main()
+    run(main())

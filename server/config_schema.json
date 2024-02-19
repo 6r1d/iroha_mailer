@@ -23,12 +23,18 @@
         "mail": {
             "type": "object",
             "properties": {
-                "email_from": {"type": "string"},
+                "email_from": {"type": "string"}
+            },
+            "required": ["email_from"]
+        },
+        "subscription": {
+            "type": "object",
+            "properties": {
                 "root_url": {"type": "string"},
                 "enable_list_unsubscribe": {"type": "boolean"}
             },
-            "required": ["email_from", "root_url"]
+            "required": ["root_url", "enable_list_unsubscribe"]
         }
     },
-    "required": ["http", "smtp", "mail"]
+    "required": ["http", "smtp", "mail", "subscription"]
 }
